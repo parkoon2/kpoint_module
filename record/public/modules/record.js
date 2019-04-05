@@ -1,29 +1,51 @@
 class Record {
-    constructor(localStream = '', remoteStream = '') {
-        this.localAudio = localStream && localStream.getAudioTracks()[0]
-        this.remoteAudio = remoteStream && remoteStream.getAudioTracks()[0]
+    constructor() {
 
 
-        // 컨텍스트 만들고
-        let audioCtx = new AudioContext()
 
-        // 컨텍스트의 createMediaStreamSource 를 이용해 audio 소스 만들고
+        // this.enableStartRecord = true
+        // this.enableStopRecord = false
+        // this.enableDownloadRecord = false
 
-        // 컨텍스트의 createMediaStreamDestination 로 목적지 만들고
-
-        // audio 소스를 목적지에 connect 시켜주고
-
-        // 목적지에서 오디오 트랙을 가져오면 된다.
-
-        this.enableStartRecord = true
-        this.enableStopRecord = false
-        this.enableDownloadRecord = false
-
-        this.stream = null
+        this.localAudio = null
+        this.remoteAudio = null
+        this.mergedAudioTrack = null
+        this.recordStream = null
         this.mediaRecorder = null
         this.chunks = []
 
         this.timeSlice = 10
+    }
+
+    mergeAudiotrack(tracks = []) {
+        // 컨텍스트 만들고
+        let audioCtx = new AudioContext()
+
+        let audioStreamSources = tracks.map(track => {
+
+            if (track) {
+
+                return audioCtx.createMediaStreamSource(new MediaStream([track]))
+
+            }
+
+        })
+
+
+
+        let streamDest = audioCtx.createMediaStreamDestination()
+
+        audioStreamSources.forEach(audioStream => {
+
+            if (audioStream) {
+                console.log('audioStream', audioStream)
+                audioStream.connect(streamDest)
+            }
+        });
+
+
+        return streamDest.stream.getAudioTracks()[0]
+
     }
 
     static startScreenCapture() {
@@ -43,27 +65,35 @@ class Record {
     }
 
 
-    async startRecording() {
+    async startRecording(localStream = null, remoteStream = null) {
         console.log('Start recording...')
-        if (!this.localAudio) {
-            console.warn('local audio source is not found')
+        if (!localStream) {
+            console.warn('Local stream source is not found. Cannot record your audio')
         }
-        if (!this.remoteAudio) {
-            console.warn('local audio source is not found')
+        if (!remoteStream) {
+            console.warn('Remote stream source is not found. Cannot record remote audio')
         }
 
+        this.localAudio = localStream && localStream.getAudioTracks()[0]
+        this.remoteAudio = remoteStream && remoteStream.getAudioTracks()[0]
 
-        this.enableStartRecord = false
-        this.enableStopRecord = true
-        this.enableDownloadRecord = false
+        this.mergedAudioTrack = this.mergeAudiotrack([this.localAudio, this.remoteAudio])
 
-        this.stream = await Record.startScreenCapture()
-        this.stream.addEventListener('inactive', e => {
+        // this.enableStartRecord = false
+        // this.enableStopRecord = true
+        // this.enableDownloadRecord = false
+
+        this.recordStream = await Record.startScreenCapture()
+
+        this.recordStream.addTrack(this.mergedAudioTrack)
+        console.log('After merge with audio stream - ', this.recordStream.getTracks())
+
+        this.recordStream.addEventListener('inactive', e => {
             console.log('Record Stream inactive - stop recording')
             this.stopRecording()
         })
 
-        this.mediaRecorder = new MediaRecorder(this.stream, { mimeType: 'video/webm' })
+        this.mediaRecorder = new MediaRecorder(this.recordStream, { mimeType: 'video/webm' })
         this.mediaRecorder.addEventListener('dataavailable', ({ data }) => {
             if (data && data.size > 0) {
                 this.chunks.push(data)
@@ -79,8 +109,8 @@ class Record {
         if (this.mediaRecorder) {
             this.mediaRecorder.stop()
             this.mediaRecorder = null
-            Record.clearTracks(this.stream)
-            this.stream = null
+            Record.clearTracks(this.recordStream)
+            this.recordStream = null
 
             this.recording = new Blob(this.chunks, { type: 'video/webm' })
 

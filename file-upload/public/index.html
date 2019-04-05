@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>File upload</title>
+</head>
+
+<body>
+
+    <div>
+        이미지 업로드 용
+        <form action="/upload/image" method="post" enctype="multipart/form-data">
+            <input id="image" type="file" name="image" multiple>
+            <input id="submit-image" type="button" value="submit">
+        </form>
+    </div>
+    <br>
+    <br>
+    <div>
+        레코드 업로드 용
+        <form action="/upload/record" method="post" enctype="multipart/form-data">
+            <input type="file" name="record" multiple>
+            <input id="submit-record" type="button" value="submit">
+        </form>
+    </div>
+
+    <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
+    <script>
+
+        document.querySelector('input#submit-image').addEventListener('click', e => {
+            const { files } = document.querySelector('input#image')
+            const formData = new FormData();
+
+            Object.keys(files).forEach(idx => {
+                console.log('files[idx]', files[idx])
+                formData.append(files[idx])
+            })
+
+            console.log('imageFile', imageFile.files)
+            formData.set('userName', 'Fred');
+            formData.append('image', imageFile);
+
+            console.log('formData', formData)
+            axios({
+                method: 'post',
+                url: '/upload/image',
+                data: formData,
+                config: { headers: { 'Content-Type': 'multipart/form-data' } }
+            })
+                .then(function (response) {
+                    //handle success
+                    console.log(response);
+                })
+                .catch(function (response) {
+                    //handle error
+                    console.log(response);
+                });
+        })
+
+    </script>
+
+</body>
+
+</html>

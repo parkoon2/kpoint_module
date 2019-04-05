@@ -6,10 +6,14 @@ document.getElementById('stop-record').addEventListener('click', handleStopRecor
 document.getElementById('download-record').addEventListener('click', handleDownloadRecording)
 //https://flaviocopes.com/webrtc/
 let record = new Record()
+let connection = null
+let localStream = null
+let remoteStream = null
+let otherUsername = ''
 
 function handleStartRecord() {
 
-    record.startRecording()
+    record.startRecording(localStream, remoteStream)
 }
 
 async function handleStopRecording() {
@@ -21,11 +25,6 @@ function handleDownloadRecording() {
     record.downloadRecording()
 }
 
-
-let connection = null
-let localStream = null
-let remoteStream = null
-let otherUsername = ''
 
 function handleLogin() {
     const username = document.getElementById('username').value
