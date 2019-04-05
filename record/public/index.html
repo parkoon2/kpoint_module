@@ -20,8 +20,9 @@
         <button id="take">전화받기</button>
     </div>
     <div>
-        <button>녹화시작</button>
-        <button>녹화정지</button>
+        <button id="start-record">녹화시작</button>
+        <button id="stop-record">녹화정지</button>
+        <button id="download-record">녹화다운로드</button>
         <button>녹화재생</button>
         <input type="text" value="http://localhost:3000/record" />
         <button>서버로 전송</button>
@@ -35,7 +36,7 @@
     <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
 
     <script src="/controller/socket.js"></script>
-    <script src="/modules/p2p-video-chat.js"></script>
+    <!-- <script src="/modules/p2p-video-chat.js"></script> -->
     <script src="/modules/record.js"></script>
     <script src="/controller/index.js"></script>
 </body>
