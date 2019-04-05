@@ -1,7 +1,19 @@
 document.getElementById('call').addEventListener('click', handleCall)
 document.getElementById('take').addEventListener('click', handleTake)
 document.getElementById('login').addEventListener('click', handleLogin)
+document.getElementById('start-record').addEventListener('click', handleStartRecord)
+document.getElementById('stop-record').addEventListener('click', handleStop)
 //https://flaviocopes.com/webrtc/
+
+function handleStartRecord() {
+
+    const record = new Record()
+    record.startRecording()
+}
+
+function handleStop() {
+
+}
 
 function handleLogin() {
     const username = document.getElementById('username').value
