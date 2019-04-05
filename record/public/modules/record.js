@@ -4,8 +4,16 @@ class Record {
         this.remoteAudio = remoteStream && remoteStream.getAudioTracks()[0]
 
 
+        // 컨텍스트 만들고
         let audioCtx = new AudioContext()
 
+        // 컨텍스트의 createMediaStreamSource 를 이용해 audio 소스 만들고
+
+        // 컨텍스트의 createMediaStreamDestination 로 목적지 만들고
+
+        // audio 소스를 목적지에 connect 시켜주고
+
+        // 목적지에서 오디오 트랙을 가져오면 된다.
 
         this.enableStartRecord = true
         this.enableStopRecord = false
