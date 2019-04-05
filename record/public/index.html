@@ -15,6 +15,7 @@
     </div>
 
     <div>
+        <input id="other-username" placeholder="other user name you want to call..." autofocus />
         <button id="call">전화걸기</button>
         <button id="take">전화받기</button>
     </div>
@@ -26,15 +27,15 @@
         <button>서버로 전송</button>
     </div>
     <div>
-        <video id="my-video" autoplay></video>
-
-        <video id="record-result"></video>
+        <video id="local" autoplay></video>
+        <video id="remote" autoplay></video>
     </div>
 
     <!-- helps for cross-browser compatibility -->
     <script src="https://webrtc.github.io/adapter/adapter-latest.js"></script>
 
     <script src="/controller/socket.js"></script>
+    <script src="/modules/p2p-video-chat.js"></script>
     <script src="/modules/record.js"></script>
     <script src="/controller/index.js"></script>
 </body>
