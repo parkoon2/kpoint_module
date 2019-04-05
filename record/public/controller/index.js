@@ -35,6 +35,7 @@ async function loginSuccess() {
         // handle onaddstream
         connection.onaddstream = (event) => {
             console.log('event.stream', event.stream)
+            remoteStream = event.stream
             document.querySelector('video#remote').srcObject = event.stream
         }
 
