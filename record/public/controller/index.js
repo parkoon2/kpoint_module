@@ -2,18 +2,26 @@ document.getElementById('call').addEventListener('click', handleCall)
 document.getElementById('take').addEventListener('click', handleTake)
 document.getElementById('login').addEventListener('click', handleLogin)
 document.getElementById('start-record').addEventListener('click', handleStartRecord)
-document.getElementById('stop-record').addEventListener('click', handleStop)
+document.getElementById('stop-record').addEventListener('click', handleStopRecording)
+document.getElementById('download-record').addEventListener('click', handleDownloadRecording)
 //https://flaviocopes.com/webrtc/
+let record = new Record()
 
 function handleStartRecord() {
 
-    const record = new Record()
     record.startRecording()
 }
 
-function handleStop() {
-
+async function handleStopRecording() {
+    let data = await record.stopRecording()
+    console.log(`${data} - you can download`, data)
 }
+
+function handleDownloadRecording() {
+    record.downloadRecording()
+}
+
+
 let connection = null
 let localStream = null
 let remoteStream = null
