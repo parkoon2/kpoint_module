@@ -12,9 +12,9 @@
 
     <div>
         이미지 업로드 용
-        <form action="/upload/image" method="post" enctype="multipart/form-data">
-            <input id="image" type="file" name="image" multiple>
-            <input id="submit-image" type="button" value="submit">
+        <form id="image-form" action="/upload/image" method="post" enctype="multipart/form-data">
+            <input id="image" type="file" name="images" multiple>
+            <input id="submit-image" type="submit">
         </form>
     </div>
     <br>
@@ -30,23 +30,29 @@
     <script src="https://unpkg.com/axios/dist/axios.min.js"></script>
     <script>
 
-        document.querySelector('input#submit-image').addEventListener('click', e => {
+        document.querySelector('form#image-form').addEventListener('submit', e => {
+            e.preventDefault()
             const { files } = document.querySelector('input#image')
+
+            if (files.length === 0) {
+                alert('파일을 선택해주세요')
+                return
+            }
+
             const formData = new FormData();
 
             Object.keys(files).forEach(idx => {
-                console.log('files[idx]', files[idx])
-                formData.append(files[idx])
+                
+                // 파일 Validation은 여기서 하면 될 듯
+                formData.append('images', files[idx])
             })
 
-            console.log('imageFile', imageFile.files)
-            formData.set('userName', 'Fred');
-            formData.append('image', imageFile);
+            formData.append('foo', 'bar')
+           // formData.set('image', 'image');
 
-            console.log('formData', formData)
             axios({
                 method: 'post',
-                url: '/upload/image',
+                url: '/upload/image/admin',
                 data: formData,
                 config: { headers: { 'Content-Type': 'multipart/form-data' } }
             })
