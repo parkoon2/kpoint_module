@@ -1,67 +1,55 @@
-const pdfLib = require('pdfjs-dist')
-
+const pdfLib = require("pdfjs-dist");
 
 class PdfJS {
-
     constructor() {
+        pdfLib.GlobalWorkerOptions.workerSrc =
+            "//cdnjs.cloudflare.com/ajax/libs/pdf.js/2.0.943/pdf.worker.js";
 
-        pdfLib.GlobalWorkerOptions.workerSrc = '//cdnjs.cloudflare.com/ajax/libs/pdf.js/2.0.943/pdf.worker.js';
-
-        this.scale = 1.4
-
+        this.scale = 1.4;
     }
 
     pdfToBlob(file) {
-
         return new Promise(async (resolve, reject) => {
-
             try {
-
-                const pdf = await pdfLib.getDocument(file)
+                const pdf = await pdfLib.getDocument(file);
 
                 const pages = pdf.numPages;
 
                 let idx = 1;
-                const chunks = []
+                const chunks = [];
 
                 for (; idx <= pages; idx++) {
+                    const page = await pdf.getPage(idx);
+                    const canvas = document.createElement("canvas");
+                    const ctx = canvas.getContext("2d");
+                    const viewport = page.getViewport(this.scale);
 
-                    const page = await pdf.getPage(idx)
-                    const canvas = document.createElement('canvas')
-                    const ctx = canvas.getContext('2d')
-                    const viewport = page.getViewport(this.scale)
-
-                    canvas.height = viewport.height
-                    canvas.width = viewport.width
+                    canvas.height = viewport.height;
+                    canvas.width = viewport.width;
 
                     const renderContext = {
                         canvasContext: ctx,
-                        viewport,
-                    }
+                        viewport
+                    };
                     const renderTask = page.render(renderContext);
 
-
                     renderTask.promise.then(() => {
-
-                        canvas.toBlob((blob) => {
-                            chunks.push(blob)
+                        canvas.toBlob(blob => {
+                            chunks.push(blob);
 
                             if (chunks.length === pages) {
                                 resolve({
                                     data: chunks,
                                     pageNum: pages
-                                })
+                                });
                             }
-
-                        }, 'image/jpeg');
+                        }, "image/jpeg");
                     });
                 }
-
             } catch (err) {
-                reject(err)
+                reject(err);
             }
-
-        })
+        });
 
         // pdf.getPage(index).then(function(page) {
 
@@ -83,12 +71,7 @@ class PdfJS {
     }
 }
 
-
-
-module.exports = PdfJS
-
-
-
+module.exports = PdfJS;
 
 // const pdfLib = require('pdfjs-dist')
 // const assert = require('assert')
@@ -181,8 +164,6 @@ module.exports = PdfJS
 //         })
 //     }
 
-
-
 // pdf.getPage(index).then(function(page) {
 
 //     let canvas = document.createElement('canvas');
@@ -201,7 +182,5 @@ module.exports = PdfJS
 // });
 // }
 // }
-
-
 
 // module.exports = PdfJS

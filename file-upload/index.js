@@ -62,4 +62,6 @@ app.post("/upload/image/:userId", imageMiddleware.array("images", 3), function(
     });
 });
 
-app.listen("3001");
+app.listen(3001, () => {
+    console.log(`Server is running on 3001 port`);
+});
